@@ -3859,5 +3859,40 @@ body {
   }
 }
 
+/* Aturan tampilan responsif untuk layar HP */
+@media (max-width: 768px) {
+  body, html {
+    width: 100%;
+    overflow-x: hidden;
+  }
 
+  nav, .navbar, header {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 16px;
+    justify-content: space-between;
+  }
+
+  .search-bar, input[type="text"] {
+    width: 100%;
+    order: 3;
+  }
+
+  .hero, .hero-section {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px 16px;
+  }
+
+  .hero img, img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .grid, .features-grid, .auction-grid, .stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+    padding: 0 16px;
+  }
+}
 
