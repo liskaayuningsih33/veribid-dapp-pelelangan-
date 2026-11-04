@@ -1,0 +1,1880 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VeriBid — Decentralized Auction Platform (dApp Ethereum)</title>
+  <meta name="description"
+    content="VeriBid adalah platform lelang terdesentralisasi berbasis Smart Contract Ethereum yang transparan, bebas shill-bidding, dan mengamankan dana lelang dengan escrow otomatis.">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="theme-light">
+  <!-- Background Ambient Glows -->
+  <div class="ambient-glow glow-cyan"></div>
+  <div class="ambient-glow glow-blue"></div>
+
+  <!-- Main Top Navigation -->
+  <!-- Main Top Navigation (Matching Screenshot) -->
+  <header class="top-navbar" id="topNavbar">
+    <div class="nav-left">
+      <div class="brand-logo" onclick="app.navTo('home', event)">
+        <svg width="34" height="34" viewBox="0 0 40 40" fill="none" class="brand-v-logo">
+          <defs>
+            <linearGradient id="vbGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#4f46e5" />
+              <stop offset="100%" stop-color="#3b82f6" />
+            </linearGradient>
+            <linearGradient id="vbGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#3b82f6" />
+              <stop offset="100%" stop-color="#60a5fa" />
+            </linearGradient>
+            <linearGradient id="vbGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#2563eb" />
+              <stop offset="100%" stop-color="#1d4ed8" />
+            </linearGradient>
+          </defs>
+          <path d="M6 7L17 33L23 20L13 7H6Z" fill="url(#vbGrad1)" />
+          <path d="M34 7L21 33L25 19L34 7Z" fill="url(#vbGrad2)" />
+          <path d="M17 33L21 33L25 19L23 20L17 33Z" fill="url(#vbGrad3)" opacity="0.9" />
+        </svg>
+        <span class="brand-text-logo">VeriBid</span>
+      </div>
+    </div>
+
+    <!-- Center Navigation Links (Beranda | Lelang | Tokenomik | Tentang | FAQ) -->
+    <nav class="nav-links-menu" id="navLinksMenu">
+      <a href="#heroLanding" class="nav-menu-item active" id="menuHome" onclick="app.navTo('home', event)">Beranda</a>
+      <a href="#auctionFilterBar" class="nav-menu-item" id="menuLelang" onclick="app.navTo('lelang', event)">Lelang</a>
+      <a href="#sectionTokenomics" class="nav-menu-item" id="menuTokenomics" onclick="app.navTo('tokenomics', event)">Tokenomik</a>
+      <a href="#sectionTentang" class="nav-menu-item" id="menuTentang" onclick="app.navTo('tentang', event)">Tentang</a>
+      <a href="#sectionFaq" class="nav-menu-item" id="menuFaq" onclick="app.navTo('faq', event)">FAQ</a>
+    </nav>
+
+    <!-- Right Controls: Search Pill, Sepolia Network Badge & Connect Wallet Button -->
+    <div class="nav-right-cluster">
+      <div class="nav-search-wrapper">
+        <svg class="search-glass-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="navGlobalSearch" placeholder="Cari barang lelang..."
+          oninput="app.handleGlobalSearch(this.value)" autocomplete="off" />
+      </div>
+
+      <!-- Sepolia Network Badge -->
+      <div class="nav-network-pill" id="navNetworkPill" onclick="app.switchOrCheckSepolia()" title="Jaringan Blockchain: Ethereum Sepolia (Chain ID 11155111). Klik untuk memeriksa jaringan.">
+        <span class="network-dot-indicator"></span>
+        <span class="network-pill-text">Sepolia</span>
+      </div>
+
+      <button class="nav-connect-wallet-btn" id="navWalletBtn" onclick="app.handleWalletBtnClick()">
+        <svg class="wallet-icon-svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.2">
+          <rect x="2" y="6" width="20" height="14" rx="3"></rect>
+          <path d="M16 13a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"></path>
+          <path d="M2 10h20"></path>
+        </svg>
+        <span id="navWalletBtnLabel">Connect Wallet</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="main-container">
+
+    <!-- ============================================== -->
+    <!-- TAB 1: AUCTIONS (Lelang Aktif & Detail) -->
+    <!-- ============================================== -->
+    <section class="tab-pane active" id="paneAuctions">
+
+      <!-- HERO LANDING SECTION (MATCHING SCREENSHOT) -->
+      <div class="hero-landing-section" id="heroLanding">
+        <div class="hero-glow-orb purple-orb"></div>
+
+        <div class="hero-landing-row">
+          <!-- Left Column: Copy & CTAs -->
+          <div class="hero-copy-col">
+            <div class="hero-subtitle-tag">PLATFORM LELANG TERDESENTRALISASI</div>
+
+            <h1 class="hero-title-headline">
+              Lelang Transparan,<br>
+              <span class="hero-title-blue">Aman, dan Tanpa<br>Kecurangan</span>
+            </h1>
+
+            <p class="hero-desc-lead">
+              VeriBid adalah platform lelang berbasis blockchain Ethereum yang mencatat semua transaksi secara
+              transparan melalui smart contract. Ikuti lelang, lakukan penawaran, dan pantau semua proses secara
+              real-time.
+            </p>
+
+            <div class="hero-cta-group">
+              <button class="btn-hero-primary" onclick="app.scrollToAuctions()">
+                <span>Mulai Lelang Sekarang</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </button>
+
+              <button class="btn-hero-secondary" onclick="app.scrollToTentang()">
+                <span class="play-icon-disc">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                  </svg>
+                </span>
+                <span>Pelajari Lebih Lanjut</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Right Column: 3D Holographic Ethereum Crystal on Pedestal -->
+          <div class="hero-visual-col">
+            <div class="hero-crystal-frame">
+              <div class="hero-crystal-radial-back"></div>
+              <img src="assets/hero_ethereum_pedestal_3d.png" alt="Ethereum 3D Crystal Pedestal VeriBid"
+                class="hero-crystal-asset" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom 4 Feature Cards (Transparan, Aman, Desentralisasi, Tanpa Kecurangan) -->
+        <div class="hero-feature-cards-row">
+          <!-- 1. Transparan -->
+          <div class="feature-bar-card">
+            <div class="feature-bar-icon-box">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="4" ry="4"></rect>
+                <circle cx="12" cy="12" r="3.5"></circle>
+                <path d="M12 8.5v1"></path>
+              </svg>
+            </div>
+            <div class="feature-bar-text">
+              <h4 class="feature-bar-title">Transparan</h4>
+              <p class="feature-bar-desc">Semua transaksi dapat dilihat di blockchain.</p>
+            </div>
+          </div>
+
+          <!-- 2. Aman -->
+          <div class="feature-bar-card">
+            <div class="feature-bar-icon-box">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <circle cx="12" cy="11" r="2.5"></circle>
+              </svg>
+            </div>
+            <div class="feature-bar-text">
+              <h4 class="feature-bar-title">Aman</h4>
+              <p class="feature-bar-desc">Dijalankan oleh smart contract di Ethereum.</p>
+            </div>
+          </div>
+
+          <!-- 3. Desentralisasi -->
+          <div class="feature-bar-card">
+            <div class="feature-bar-icon-box">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="2"></circle>
+                <path
+                  d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83">
+                </path>
+              </svg>
+            </div>
+            <div class="feature-bar-text">
+              <h4 class="feature-bar-title">Desentralisasi</h4>
+              <p class="feature-bar-desc">Tidak ada pihak tunggal yang mengontrol.</p>
+            </div>
+          </div>
+
+          <!-- 4. Tanpa Kecurangan -->
+          <div class="feature-bar-card">
+            <div class="feature-bar-icon-box">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <polyline points="9 12 11 14 15 10"></polyline>
+              </svg>
+            </div>
+            <div class="feature-bar-text">
+              <h4 class="feature-bar-title">Tanpa Kecurangan</h4>
+              <p class="feature-bar-desc">Mencegah manipulasi dan shill bidding.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIMULATION CONTROLS & ACADEMIC HELPERS STRIP -->
+      <div class="sim-control-bar glass-panel" id="simControlBar">
+        <div class="sim-bar-left">
+          <div class="sim-role-picker">
+            <span class="sim-label">⚡ Peran Aktif:</span>
+            <select id="actorSelector" class="sim-select" onchange="app.setActorRole(this.value)"
+              title="Pilih peran aktor simulasi sesuai Bab II Dokumen">
+              <option value="bidder" selected>👤 Peserta Lelang (Bidder: Haikal)</option>
+              <option value="seller">🏷️ Penjual (Seller: Fredrik)</option>
+              <option value="admin">🛡️ Admin/Auctioneer (KYC: Dhani)</option>
+              <option value="auditor">🔍 Auditor / Regulator (Jesen & Liska)</option>
+              <option value="validator">⚡ Node Validator (PoS EVM)</option>
+            </select>
+          </div>
+          <span class="sim-kyc-tag" id="kycStatusBadge">
+            <span class="badge-dot green"></span> UserRegistry: Terverifikasi
+          </span>
+        </div>
+
+        <div class="sim-bar-right">
+          <button class="sim-quick-btn" id="pendingRefundBtn" onclick="app.openRefundModal()"
+            title="Tarik saldo pengembalian dana mandiri (Pull Payment)">
+            <span>💰 Saldo Tarik (Pull): </span>
+            <strong id="refundBalanceNav">0.000 ETH</strong>
+          </button>
+          <div class="sim-nav-pills">
+            <button class="sim-tab-pill" onclick="app.switchTab('create')" title="Buat Lelang Baru (AuctionFactory)">➕
+              Buat Lelang</button>
+            <button class="sim-tab-pill" onclick="app.switchTab('contracts')"
+              title="Buka Kode Smart Contract Solidity">📜 Smart Contract</button>
+            <button class="sim-tab-pill" onclick="app.switchTab('security')" title="Buka Analisis Risiko & Mitigasi">🛡️
+              Analisis Risiko</button>
+            <button class="sim-tab-pill" onclick="app.switchTab('explorer')" title="Buka VeriScan Block Explorer">🔍
+              VeriScan</button>
+            <button class="sim-tab-pill login-pill" onclick="app.openLoginModal()" id="navLoginBtn"
+              title="Manajemen Akun">👤 Akun Sesi</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero / Stats Bar -->
+      <div class="stats-overview-grid">
+        <div class="stat-card">
+          <div class="stat-icon cyan">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+          </div>
+          <div class="stat-data">
+            <span class="stat-title">Lelang Aktif di EVM</span>
+            <span class="stat-value" id="statActiveAuctions">3 Kontrak</span>
+            <span class="stat-sub text-success">✓ 100% On-Chain Escrow</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon purple">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
+          <div class="stat-data">
+            <span class="stat-title">Total Nilai Terkunci (TVL)</span>
+            <span class="stat-value" id="statTotalTVL">58.75 ETH</span>
+            <span class="stat-sub">≈ Rp 2.643.750.000</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon green">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </div>
+          <div class="stat-data">
+            <span class="stat-title">Keamanan Kontrak</span>
+            <span class="stat-value">Checks-Effects</span>
+            <span class="stat-sub text-cyan">Anti-Reentrancy Guard ON</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon amber">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <div class="stat-data">
+            <span class="stat-title">Gas Fee Rata-Rata</span>
+            <span class="stat-value" id="statGasFee">18.4 Gwei</span>
+            <span class="stat-sub">Sepolia Testnet #849201</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter and Search Bar -->
+      <div class="auction-filter-bar">
+        <div class="filter-left">
+          <h2 class="section-title">Katalog Lelang Transparan</h2>
+          <p class="section-subtitle">Setiap tawaran terekam permanen pada Ethereum Blockchain, bebas dari manipulasi
+            pihak tengah.</p>
+        </div>
+        <div class="filter-right">
+          <div class="filter-pill-group">
+            <button class="pill-btn active" onclick="app.filterAuctions('all', this)">Semua (3)</button>
+            <button class="pill-btn" onclick="app.filterAuctions('digital', this)">NFT & Aset Digital</button>
+            <button class="pill-btn" onclick="app.filterAuctions('physical', this)">Aset Fisik/Mewah</button>
+            <button class="pill-btn" onclick="app.filterAuctions('rwa', this)">RWA & Properti</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auction Cards Grid -->
+      <div class="auctions-grid" id="auctionsGridContainer">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+
+      <!-- ============================================== -->
+      <!-- SECTION: TOKENOMIK $VBID (VeriBid Tokenomics) -->
+      <!-- ============================================== -->
+      <div class="landing-section-block glass-panel" id="sectionTokenomics">
+        <div class="landing-section-header">
+          <div class="badge-tech">
+            <span class="badge-dot green"></span> ERC-20 Ethereum Sepolia
+          </div>
+          <h2 class="section-title">Tokenomik $VBID — VeriBid Token Ecosystem</h2>
+          <p class="section-subtitle">
+            Arsitektur ekonomi token terdesentralisasi di Ethereum Sepolia Testnet yang menopang mekanisme lelang bebas shill bidding, jaminan kolateral penjual (slashing deposit), insentif partisipasi penawar aktif, dan tata kelola protokol.
+          </p>
+        </div>
+
+        <!-- 4 Key Token Specs Grid -->
+        <div class="tokenomics-specs-grid">
+          <div class="token-spec-card">
+            <div class="token-spec-icon blue">💎</div>
+            <div class="token-spec-info">
+              <span class="token-spec-label">Nama & Simbol Token</span>
+              <strong class="token-spec-val">VeriBid ($VBID)</strong>
+              <span class="token-spec-sub">Standar ERC-20 (EVM Compatible)</span>
+            </div>
+          </div>
+
+          <div class="token-spec-card">
+            <div class="token-spec-icon purple">🪙</div>
+            <div class="token-spec-info">
+              <span class="token-spec-label">Total Pasokan Maksimal</span>
+              <strong class="token-spec-val">100.000.000 $VBID</strong>
+              <span class="token-spec-sub">Fixed Cap (Tanpa Inflasi Tambahan)</span>
+            </div>
+          </div>
+
+          <div class="token-spec-card">
+            <div class="token-spec-icon green">⚡</div>
+            <div class="token-spec-info">
+              <span class="token-spec-label">Jaringan Blockchain</span>
+              <strong class="token-spec-val">Ethereum Sepolia</strong>
+              <span class="token-spec-sub">Chain ID: 11155111 (0xaa36a7)</span>
+            </div>
+          </div>
+
+          <div class="token-spec-card">
+            <div class="token-spec-icon amber">📜</div>
+            <div class="token-spec-info">
+              <span class="token-spec-label">Kontrak Token (Sepolia)</span>
+              <div class="token-contract-copy-row">
+                <span class="token-contract-trunc text-mono">0x71C8...14f7</span>
+                <button class="btn-copy-chip" onclick="app.copyTokenContract()" title="Salin Contract Address">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                </button>
+              </div>
+              <a href="https://sepolia.etherscan.io/address/0x71C8A184243229b4B283a0056637e6F1f3B514f7" target="_blank" rel="noopener noreferrer" class="token-spec-link">Buka di Sepolia Etherscan ↗</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Token Distribution & Allocation Breakdown -->
+        <div class="tokenomics-distribution-box">
+          <div class="distribution-header-row">
+            <div>
+              <h3 class="dist-title">Distribusi & Alokasi Token</h3>
+              <p class="dist-sub">Alokasi terencana untuk menjaga likuiditas, integritas lelang, dan pertumbuhan jangka panjang ekosistem.</p>
+            </div>
+            <div class="total-badge-pill">Total: 100M $VBID</div>
+          </div>
+
+          <!-- Visual Progress Multi-Bar -->
+          <div class="token-dist-bar-wrapper">
+            <div class="token-dist-segment seg-rewards" style="width: 35%;" title="35% Insentif Lelang">35%</div>
+            <div class="token-dist-segment seg-staking" style="width: 25%;" title="25% Pool Asuransi & Staking">25%</div>
+            <div class="token-dist-segment seg-ecosystem" style="width: 15%;" title="15% Ekosistem & Developer">15%</div>
+            <div class="token-dist-segment seg-liquidity" style="width: 10%;" title="10% Likuiditas DEX">10%</div>
+            <div class="token-dist-segment seg-team" style="width: 10%;" title="10% Tim & Penasihat">10%</div>
+            <div class="token-dist-segment seg-airdrop" style="width: 5%;" title="5% Airdrop Komunitas">5%</div>
+          </div>
+
+          <!-- Allocation Cards Grid -->
+          <div class="allocation-items-grid">
+            <div class="alloc-card">
+              <div class="alloc-dot-label">
+                <span class="alloc-dot dot-rewards"></span>
+                <strong>35% — Insentif Lelang & Bidding Mining</strong>
+              </div>
+              <div class="alloc-amount">35.000.000 $VBID</div>
+              <p class="alloc-desc">Cashback penawaran lelang, reward bagi pemenang yang menyelesaikan pembayaran tepat waktu, dan reward validator EVM.</p>
+            </div>
+
+            <div class="alloc-card">
+              <div class="alloc-dot-label">
+                <span class="alloc-dot dot-staking"></span>
+                <strong>25% — Staking & Pool Asuransi Anti-Shill</strong>
+              </div>
+              <div class="alloc-amount">25.000.000 $VBID</div>
+              <p class="alloc-desc">Kolateral jaminan penjual untuk mencegah manipulasi penawaran harga. Otomatis di-slash jika smart contract mendeteksi shill-bidding.</p>
+            </div>
+
+            <div class="alloc-card">
+              <div class="alloc-dot-label">
+                <span class="alloc-dot dot-ecosystem"></span>
+                <strong>15% — Pengembangan Ekosistem & Hibah</strong>
+              </div>
+              <div class="alloc-amount">15.000.000 $VBID</div>
+              <p class="alloc-desc">Pendanaan audit berkala oleh auditor independen, integrasi EVM Layer-2 (Arbitrum/Optimism), dan program bug bounty.</p>
+            </div>
+
+            <div class="alloc-card">
+              <div class="alloc-dot-label">
+                <span class="alloc-dot dot-liquidity"></span>
+                <strong>10% — Likuiditas DEX (Uniswap Sepolia)</strong>
+              </div>
+              <div class="alloc-amount">10.000.000 $VBID</div>
+              <p class="alloc-desc">Penyediaan pool likuiditas terdesentralisasi pair VBID/SepoliaETH untuk kemudahan penukaran aset peserta lelang.</p>
+            </div>
+
+            <div class="alloc-card">
+              <div class="alloc-dot-label">
+                <span class="alloc-dot dot-team"></span>
+                <strong>10% — Tim Inti & Penasihat</strong>
+              </div>
+              <div class="alloc-amount">10.000.000 $VBID</div>
+              <p class="alloc-desc">Terkunci smart contract (timelock) dengan cliff 6 bulan dan vesting linear 24 bulan guna menjamin komitmen jangka panjang.</p>
+            </div>
+
+            <div class="alloc-card">
+              <div class="alloc-dot-label">
+                <span class="alloc-dot dot-airdrop"></span>
+                <strong>5% — Airdrop Publik & Faucet Testnet</strong>
+              </div>
+              <div class="alloc-amount">5.000.000 $VBID</div>
+              <p class="alloc-desc">Alokasi gratis bagi pengguna testnet Sepolia untuk menguji transaksi bidding, pembuatan lelang, dan voting DAO.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Utility Pillars -->
+        <div class="token-utilities-container">
+          <h3 class="dist-title" style="margin-bottom: 20px;">Fungsi & Utilitas Token $VBID</h3>
+          <div class="about-pillars-grid">
+            <div class="pillar-card">
+              <div class="pillar-icon-box">🏷️</div>
+              <h3>Diskon Fee Transaksi 50%</h3>
+              <p>Pengguna yang membayar biaya platform lelang menggunakan token $VBID otomatis mendapatkan potongan biaya komisi lelang hingga 50%.</p>
+            </div>
+
+            <div class="pillar-card">
+              <div class="pillar-icon-box">🛡️</div>
+              <h3>Anti-Shill Seller Bond</h3>
+              <p>Penjual wajib mengunci bond $VBID di smart contract AuctionFactory. Jika terbukti berbuat curang, bond langsung dipotong dan dibagikan ke penawar korban.</p>
+            </div>
+
+            <div class="pillar-card">
+              <div class="pillar-icon-box">🗳️</div>
+              <h3>Tata Kelola DAO</h3>
+              <p>Pemegang token memiliki hak suara dalam proposal desentralisasi: penyesuaian durasi lelang, verifikasi kurator KYC, dan integrasi aset RWA.</p>
+            </div>
+
+            <div class="pillar-card">
+              <div class="pillar-icon-box">💰</div>
+              <h3>Staking Reward & Escrow Yield</h3>
+              <p>Staking token $VBID pada safety vault protokol untuk menerima imbal hasil pasif dari sebagian akumulasi komisi lelang yang berhasil ditutup.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Faucet & Fee Simulator Widget -->
+        <div class="tokenomics-interactive-strip">
+          <div class="faucet-cta-box">
+            <div class="faucet-text-info">
+              <h4>Klaim Faucet Testnet $VBID (Sepolia)</h4>
+              <p>Dapatkan saldo gratis 500 $VBID untuk mencoba fitur lelang, staking anti-shill, dan diskon komisi lelang.</p>
+            </div>
+            <div class="faucet-action-cluster">
+              <span class="user-vbid-balance-pill" id="tokenomicsUserBalance">Saldo Anda: 500 $VBID</span>
+              <button class="btn btn-primary" onclick="app.claimVbidFaucet()">
+                <span>Klaim 500 $VBID Gratis</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- SECTION: TENTANG VERIBID (About VeriBid) -->
+      <!-- ============================================== -->
+      <div class="landing-section-block glass-panel" id="sectionTentang">
+        <div class="landing-section-header">
+          <div class="badge-tech">Arsitektur Blockchain</div>
+          <h2 class="section-title">Mengapa Memilih VeriBid?</h2>
+          <p class="section-subtitle">
+            Sistem lelang konvensional rentan terhadap kolusi internal, intervensi sepihak juru lelang, dan risiko gagal
+            bayar. VeriBid menyelesaikan seluruh celah ini dengan smart contract otonom di Ethereum Virtual Machine
+            (EVM).
+          </p>
+        </div>
+
+        <div class="about-pillars-grid">
+          <div class="pillar-card">
+            <div class="pillar-icon-box">🛡️</div>
+            <h3>Anti Shill-Bidding Otomatis</h3>
+            <p>
+              Penjual dicegah secara on-chain menawar barang miliknya sendiri melalui validasi deterministik
+              <code>require(msg.sender != seller)</code> pada tingkat bytecode EVM.
+            </p>
+          </div>
+
+          <div class="pillar-card">
+            <div class="pillar-icon-box">🔒</div>
+            <h3>Zero-Custody Escrow</h3>
+            <p>
+              Dana lelang dikunci langsung di smart contract, bukan rekening penampung pihak ketiga. Tidak ada pihak
+              yang dapat membekukan atau menggelapkan dana penawar.
+            </p>
+          </div>
+
+          <div class="pillar-card">
+            <div class="pillar-icon-box">💰</div>
+            <h3>Pola Pull-Payment Aman</h3>
+            <p>
+              Pengembalian dana bagi peserta yang kalah tawaran dicatat ke <code>pendingReturns</code> dan ditarik
+              mandiri via <code>withdraw()</code>, kebal terhadap serangan DoS dan Reentrancy.
+            </p>
+          </div>
+
+          <div class="pillar-card">
+            <div class="pillar-icon-box">🔍</div>
+            <h3>Audit On-Chain 100% Terbuka</h3>
+            <p>
+              Setiap kali penawaran terjadi, event <code>BidPlaced</code> dipancarkan ke jaringan dan dapat diaudit
+              secara real-time oleh siapa saja melalui penjelajah blok VeriScan.
+            </p>
+          </div>
+        </div>
+
+        <div class="about-quick-cta-bar">
+          <span>Ingin melihat detail implementasi kode kontrak pintar atau analisis risikonya?</span>
+          <div class="about-cta-btns">
+            <button class="btn btn-secondary btn-sm" onclick="app.switchTab('contracts')">📜 Buka Smart Contract
+              Viewer</button>
+            <button class="btn btn-secondary btn-sm" onclick="app.switchTab('security')">🛡️ Buka Analisis
+              Risiko</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- SECTION: FAQ (Frequently Asked Questions) -->
+      <!-- ============================================== -->
+      <div class="landing-section-block glass-panel" id="sectionFaq">
+        <div class="landing-section-header">
+          <div class="badge-tech">Pertanyaan Umum</div>
+          <h2 class="section-title">Frequently Asked Questions (FAQ)</h2>
+          <p class="section-subtitle">
+            Pertanyaan yang sering diajukan mengenai cara kerja lelang terdesentralisasi, keamanan dana, dan integrasi
+            smart contract di VeriBid.
+          </p>
+        </div>
+
+        <div class="faq-accordion-list">
+          <div class="faq-item active" onclick="app.toggleFaq(this)">
+            <div class="faq-question">
+              <h4>1. Bagaimana VeriBid mencegah praktik kecurangan shill bidding?</h4>
+              <span class="faq-toggle-icon">−</span>
+            </div>
+            <div class="faq-answer">
+              <p>
+                Pada lelang konvensional, penjual dapat menggunakan akun palsu untuk menaikkan harga barangnya sendiri.
+                Di VeriBid, smart contract <code>Auction.sol</code> memeriksa kepemilikan aset secara kriptografis
+                melalui <code>require(msg.sender != seller)</code>. Selain itu, setiap alamat wallet harus terverifikasi
+                di <code>UserRegistry</code>, memastikan reputasi dan integritas seluruh peserta.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="app.toggleFaq(this)">
+            <div class="faq-question">
+              <h4>2. Ke mana dana tawaran saya disimpan saat mengikuti lelang?</h4>
+              <span class="faq-toggle-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              <p>
+                Dana tawaran Anda dikunci secara otomatis dalam saldo escrow smart contract lelang (Zero-Custody
+                Escrow). Dana tersebut tidak pernah masuk ke rekening pribadi pengembang atau admin platform, dan hanya
+                dapat dicairkan kepada penjual setelah lelang berakhir secara sah (<code>finalizeAuction</code>).
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="app.toggleFaq(this)">
+            <div class="faq-question">
+              <h4>3. Apa yang terjadi jika tawaran saya dilampaui oleh peserta lain (outbid)?</h4>
+              <span class="faq-toggle-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              <p>
+                Jika ada penawar yang memasang nilai lebih tinggi, dana penawaran Anda sebelumnya seketika dikreditkan
+                ke saldo penarikan mandiri Anda (<code>pendingReturns[alamatAnda]</code>). Anda dapat menarik saldo
+                pengembalian (Pull Payment Refund) kapan saja dengan mengklik tombol "Saldo Tarik" tanpa risiko dana
+                hilang.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="app.toggleFaq(this)">
+            <div class="faq-question">
+              <h4>4. Mengapa VeriBid menggunakan pola Pull-Payment alih-alih transfer otomatis?</h4>
+              <span class="faq-toggle-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              <p>
+                Pola transfer otomatis langsung (push payment) memiliki kerentanan fatal terhadap Reentrancy Attack
+                (seperti kasus The DAO 2016) dan Denial-of-Service (DoS) jika alamat penerima menolak kiriman Ether.
+                Dengan Pull-Payment dan prinsip <em>Checks-Effects-Interactions</em>, penarikan dana dilakukan secara
+                mandiri oleh pengguna secara terisolasi dan 100% aman.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="app.toggleFaq(this)">
+            <div class="faq-question">
+              <h4>5. Apakah admin atau penyelenggara dapat mengubah pemenang lelang?</h4>
+              <span class="faq-toggle-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              <p>
+                <strong>TIDAK BISA.</strong> Sesuai prinsip desentralisasi (Bab II Laporan), admin hanya memiliki hak
+                untuk memverifikasi KYC di <code>UserRegistry</code> atau mengaktifkan jeda darurat (Circuit Breaker)
+                jika terjadi anomali jaringan. Admin secara matematis tidak memiliki fungsi untuk mengubah penawar
+                tertinggi, memotong durasi lelang, atau mengambil dana escrow lelang.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <footer class="landing-footer">
+        <div class="footer-top-row">
+          <div class="footer-brand-info">
+            <div class="brand-logo" onclick="app.navTo('home', event)">
+              <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
+                <path d="M6 7L17 33L23 20L13 7H6Z" fill="url(#vbGrad1)" />
+                <path d="M34 7L21 33L25 19L34 7Z" fill="url(#vbGrad2)" />
+                <path d="M17 33L21 33L25 19L23 20L17 33Z" fill="url(#vbGrad3)" opacity="0.9" />
+              </svg>
+              <span class="brand-text-logo" style="font-size:1.2rem;">VeriBid</span>
+            </div>
+            <p class="footer-desc">
+              Platform lelang terdesentralisasi berbasis Ethereum Smart Contract. Menjamin transparansi, integritas
+              tanpa manipulasi, dan perlindungan aset 100% on-chain.
+            </p>
+          </div>
+
+          <div class="footer-links-col">
+            <h5>Navigasi</h5>
+            <a href="#heroLanding" onclick="app.navTo('home', event)">Home</a>
+            <a href="#auctionFilterBar" onclick="app.navTo('lelang', event)">Lelang Aktif</a>
+            <a href="#sectionTokenomics" onclick="app.navTo('tokenomics', event)">Tokenomik $VBID</a>
+            <a href="#sectionTentang" onclick="app.navTo('tentang', event)">Tentang Kami</a>
+            <a href="#sectionFaq" onclick="app.navTo('faq', event)">FAQ</a>
+          </div>
+
+          <div class="footer-links-col">
+            <h5>Modul Smart Contract</h5>
+            <a href="#" onclick="app.switchTab('contracts'); return false;">Auction.sol</a>
+            <a href="#" onclick="app.switchTab('contracts'); return false;">AuctionFactory.sol</a>
+            <a href="#" onclick="app.switchTab('contracts'); return false;">UserRegistry.sol</a>
+            <a href="#" onclick="app.navTo('tokenomics', event)">VeriBidToken.sol (ERC-20)</a>
+            <a href="#" onclick="app.switchTab('explorer'); return false;">VeriScan Explorer</a>
+          </div>
+
+          <div class="footer-links-col">
+            <h5>Tim Pengembang (Tugas Kelompok)</h5>
+            <span class="team-member-item">👤 Haikal Raditya</span>
+            <span class="team-member-item">👤 Fredrik Papilaya</span>
+            <span class="team-member-item">👤 Jesen Tanamas</span>
+            <span class="team-member-item">👤 Wd. Elda Zuwelda</span>
+            <span class="team-member-item">👤 Liska Ayuningsih</span>
+          </div>
+        </div>
+
+        <div class="footer-bottom-row">
+          <span>&copy; 2026 VeriBid Network — Ethereum Sepolia Testnet dApp. Berdasarkan Analisis Aktor & Perancangan
+            Smart Contract.</span>
+          <span class="network-badge-footer">
+            <span class="pulse-dot green"></span> EVM Node Sync: Shanghai (12s block)
+          </span>
+        </div>
+      </footer>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB 2: BUAT LELANG (AuctionFactory.createAuction) -->
+    <!-- ============================================== -->
+    <section class="tab-pane" id="paneCreate">
+      <div class="create-auction-layout">
+        <div class="create-form-card glass-panel">
+          <div class="card-header-styled">
+            <div class="badge-tech">AuctionFactory.sol</div>
+            <h2 class="form-title">Daftarkan Barang Lelang Baru</h2>
+            <p class="form-subtitle">Sesuai Bab 3.3 dokumen: Penjual yang terverifikasi di <code>UserRegistry</code>
+              dapat menginstansiasi smart contract <code>Auction</code> baru.</p>
+          </div>
+
+          <form id="createAuctionForm" onsubmit="app.handleCreateAuction(event)">
+            <div class="form-group">
+              <label for="itemTitle">Nama Barang / Aset Lelang <span class="required">*</span></label>
+              <input type="text" id="itemTitle" class="form-input" placeholder="Contoh: Rare Cybernetic Core NFT #88"
+                required value="Sovereign AI Node Certificate #09">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col-6">
+                <label for="itemCategory">Kategori Aset</label>
+                <select id="itemCategory" class="form-input">
+                  <option value="digital">NFT & Digital Art</option>
+                  <option value="physical">Koleksi Fisik & Barang Mewah</option>
+                  <option value="rwa">Real World Asset (RWA)</option>
+                  <option value="seized">Aset Sitaan Negara / Likuidasi</option>
+                </select>
+              </div>
+              <div class="form-group col-6">
+                <label for="startingPrice">Harga Awal (ETH) <span class="required">*</span></label>
+                <div class="input-with-symbol">
+                  <input type="number" step="0.01" min="0.01" id="startingPrice" class="form-input" placeholder="0.5"
+                    required value="1.25">
+                  <span class="symbol-badge">ETH</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col-6">
+                <label for="minIncrement">Kenaikan Minimum (ETH) <span class="required">*</span></label>
+                <div class="input-with-symbol">
+                  <input type="number" step="0.01" min="0.01" id="minIncrement" class="form-input" placeholder="0.05"
+                    required value="0.10">
+                  <span class="symbol-badge">ETH</span>
+                </div>
+                <small class="helper-text">Kenaikan minimal penawaran berikutnya</small>
+              </div>
+              <div class="form-group col-6">
+                <label for="auctionDuration">Durasi Lelang (Detik/Menit untuk Demo) <span
+                    class="required">*</span></label>
+                <select id="auctionDuration" class="form-input">
+                  <option value="180">3 Menit (Mode Simulasi Demo)</option>
+                  <option value="600">10 Menit</option>
+                  <option value="86400">24 Jam</option>
+                  <option value="259200">3 Hari</option>
+                </select>
+                <small class="helper-text">Waktu berakhir dikunci dalam block.timestamp</small>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="itemDescription">Deskripsi & Metadata Terdesentralisasi (IPFS Hash)</label>
+              <textarea id="itemDescription" rows="3" class="form-input"
+                placeholder="Deskripsi spesifikasi aset, sertifikat otentisitas, dan hash IPFS...">Sertifikat hak kepemilikan node komputasi otonom terdesentralisasi dengan yield staking mingguan. Hash IPFS: QmZtmD2qtWBS7f7mQ11gW4wK9HwV8</textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Pilih Gambar Representasi:</label>
+              <div class="image-preset-picker">
+                <label class="preset-choice active">
+                  <input type="radio" name="imagePreset" value="cyber_nft" checked>
+                  <span>Holographic NFT</span>
+                </label>
+                <label class="preset-choice">
+                  <input type="radio" name="imagePreset" value="luxury_watch">
+                  <span>Luxury Watch</span>
+                </label>
+                <label class="preset-choice">
+                  <input type="radio" name="imagePreset" value="cyber_villa">
+                  <span>Ocean Villa RWA</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="smart-contract-preview-note">
+              <div class="note-icon">ℹ️</div>
+              <div class="note-text">
+                <strong>Alur Eksekusi Smart Contract:</strong>
+                <p>Memanggil <code>AuctionFactory.createAuction(namaBarang, hargaAwal, kenaikanMin, durasi)</code>.
+                  Memeriksa <code>UserRegistry.isVerified(msg.sender)</code> sebelum menerbitkan instance kontrak lelang
+                  baru.</p>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary btn-large" id="btnSubmitCreateAuction">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 5v14M5 12h14"></path>
+                </svg>
+                Deploy Lelang ke Blockchain (createAuction)
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Sidebar Architecture Explainer -->
+        <div class="create-sidebar">
+          <div class="glass-panel info-box">
+            <h3 class="info-title">Aturan Bisnis & Validasi</h3>
+            <ul class="rule-list">
+              <li>
+                <span class="rule-icon check">✓</span>
+                <div>
+                  <strong>Hanya Penjual Terverifikasi:</strong>
+                  <span>Alamat wallet pembuat lelang wajib terdaftar di kontrak <code>UserRegistry</code>.</span>
+                </div>
+              </li>
+              <li>
+                <span class="rule-icon check">✓</span>
+                <div>
+                  <strong>Immutable Rules:</strong>
+                  <span>Harga awal, kenaikan minimum, dan durasi tidak dapat diubah sepihak setelah kontrak
+                    terdeploy.</span>
+                </div>
+              </li>
+              <li>
+                <span class="rule-icon check">✓</span>
+                <div>
+                  <strong>Anti Shill-Bidding:</strong>
+                  <span>Smart Contract secara otomatis memblokir penjual yang menawar barang miliknya sendiri
+                    (<code>msg.sender != seller</code>).</span>
+                </div>
+              </li>
+              <li>
+                <span class="rule-icon check">✓</span>
+                <div>
+                  <strong>Zero-Custody Escrow:</strong>
+                  <span>Uang penawar dipegang oleh smart contract, bukan rekening admin terpusat.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="glass-panel gas-estimator-box">
+            <h4 class="box-label">Estimasi Biaya Transaksi (Gas)</h4>
+            <div class="gas-row">
+              <span>Operasi EVM:</span>
+              <code>CREATE2 / Contract Deployment</code>
+            </div>
+            <div class="gas-row">
+              <span>Gas Limit:</span>
+              <span>284,510 unit</span>
+            </div>
+            <div class="gas-row">
+              <span>Gas Price:</span>
+              <span>18 Gwei</span>
+            </div>
+            <div class="gas-total">
+              <span>Estimasi Gas:</span>
+              <strong class="text-cyan">0.00512 ETH</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB 3: SMART CONTRACT CODES (Bab III Dokumen) -->
+    <!-- ============================================== -->
+    <section class="tab-pane" id="paneContracts">
+      <div class="contract-viewer-container glass-panel">
+        <div class="contract-viewer-header">
+          <div>
+            <h2 class="section-title">Arsitektur & Kode Smart Contract Solidity</h2>
+            <p class="section-subtitle">Implementasi 3 modul kontrak utama sesuai Bab 3 laporan:
+              <code>UserRegistry</code>, <code>AuctionFactory</code>, dan <code>Auction</code>.</p>
+          </div>
+          <div class="contract-file-tabs">
+            <button class="c-tab-btn active" onclick="app.switchContractCode('Auction', this)">Auction.sol</button>
+            <button class="c-tab-btn"
+              onclick="app.switchContractCode('AuctionFactory', this)">AuctionFactory.sol</button>
+            <button class="c-tab-btn" onclick="app.switchContractCode('UserRegistry', this)">UserRegistry.sol</button>
+            <button class="c-tab-btn" onclick="app.switchContractCode('PseudoCode', this)">Pseudo-code (Bab
+              3.3)</button>
+          </div>
+        </div>
+
+        <div class="code-editor-layout">
+          <div class="code-meta-sidebar">
+            <h4 class="sidebar-title">Spesifikasi Modul</h4>
+            <div class="contract-meta-list" id="contractMetaInfo">
+              <!-- Rendered via JS -->
+            </div>
+
+            <div class="security-highlights">
+              <span class="badge-security">Audit Highlights</span>
+              <div class="audit-item">
+                <span class="icon-sec">🛡️</span>
+                <span><strong>Checks-Effects-Interactions:</strong> Mencegah eksploitasi Reentrancy.</span>
+              </div>
+              <div class="audit-item">
+                <span class="icon-sec">💰</span>
+                <span><strong>Pull-Payment Pattern:</strong> Pengembalian dana secara mandiri via
+                  <code>withdraw()</code>.</span>
+              </div>
+              <div class="audit-item">
+                <span class="icon-sec">🚫</span>
+                <span><strong>Anti-Self-Bidding:</strong> <code>require(msg.sender != seller)</code>.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="code-editor-main">
+            <div class="code-header-bar">
+              <span class="filename" id="contractFilename">Auction.sol</span>
+              <span class="solidity-version">Solidity ^0.8.20 | EVM: Shanghai</span>
+              <button class="btn-copy-code" onclick="app.copyActiveCode()">📋 Salin Kode</button>
+            </div>
+            <pre class="code-content"><code id="codeDisplayArea">
+// Memuat kode...
+            </code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB 4: ANALISIS RISIKO & KEAMANAN (Bab IV) -->
+    <!-- ============================================== -->
+    <section class="tab-pane" id="paneSecurity">
+      <div class="security-dashboard-container">
+        <!-- Top Case Studies Banner -->
+        <div class="case-study-hero glass-panel">
+          <div class="case-badge">Bab IV.3 Studi Kasus Dunia Nyata</div>
+          <h2>Pelajaran Keamanan dari The DAO (2016) & Parity Multisig (2017)</h2>
+          <p>Sesuai laporan kelompok, sistem VeriBid dirancang khusus untuk memitigasi kerentanan klasik yang pernah
+            melumpuhkan ekosistem Ethereum puluhan juta dolar.</p>
+        </div>
+
+        <!-- Comparison Table: Case Studies -->
+        <div class="case-studies-grid">
+          <div class="case-card the-dao">
+            <div class="case-header">
+              <div class="case-tag danger">The DAO (2016)</div>
+              <h3>Serangan Reentrancy</h3>
+            </div>
+            <div class="case-body">
+              <div class="case-field">
+                <span class="label">Penyebab:</span>
+                <p>Urutan operasi yang tidak aman: mentransfer Ether sebelum memperbarui saldo penarikan (state
+                  internal).</p>
+              </div>
+              <div class="case-field">
+                <span class="label">Dampak:</span>
+                <p>3.6 Juta ETH terkuras akibat recursive calling tak terkontrol.</p>
+              </div>
+              <div class="case-mitigation">
+                <span class="label text-success">Mitigasi di VeriBid:</span>
+                <p>Menerapkan pola <strong>Checks-Effects-Interactions</strong> secara ketat + Pola
+                  <strong>Pull-Payment</strong> (penawar kalah menarik dananya sendiri, contract tidak mengirim
+                  otomatis).</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="case-card parity">
+            <div class="case-header">
+              <div class="case-tag warning">Parity Multisig (2017)</div>
+              <h3>Inisialisasi & Kontrol Akses</h3>
+            </div>
+            <div class="case-body">
+              <div class="case-field">
+                <span class="label">Penyebab:</span>
+                <p>Fungsi inisialisasi pada kontrak pustaka (library) publik tidak dilindungi hak akses, sehingga
+                  kepemilikan dapat diambil alih dan dipanggil <code>selfdestruct()</code>.</p>
+              </div>
+              <div class="case-field">
+                <span class="label">Dampak:</span>
+                <p>513.774 ETH (senilai ratusan juta USD) terkunci permanen tanpa pemulihan.</p>
+              </div>
+              <div class="case-mitigation">
+                <span class="label text-success">Mitigasi di VeriBid:</span>
+                <p>Menggunakan OpenZeppelin <strong>AccessControl (RBAC)</strong>, membatasi fungsi administratif kritis
+                  hanya untuk role <code>ADMIN_ROLE</code>, tanpa ada pustaka selfdestruct.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Risk Matrix Table (Tabel Bab 4.1.7 & 4.2.7) -->
+        <div class="risk-matrix-card glass-panel">
+          <div class="matrix-header">
+            <h3>Matriks Identifikasi Risiko & Strategi Mitigasi (Bab 4.1.7 & 4.2.7)</h3>
+            <span class="badge-owasp">OWASP Smart Contract Top 10 Aligned</span>
+          </div>
+          <div class="table-responsive">
+            <table class="risk-table">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Jenis Risiko</th>
+                  <th>Penyebab Utama</th>
+                  <th>Dampak Potensial</th>
+                  <th>Strategi Mitigasi VeriBid</th>
+                  <th>Status Verifikasi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td><strong>Bug Pemrograman</strong></td>
+                  <td>Kesalahan logika & perhitungan saldo</td>
+                  <td>Transaksi gagal atau aset hilang</td>
+                  <td>Unit testing, static analysis (Slither), pengujian formal</td>
+                  <td><span class="badge-status pass">Passed</span></td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td><strong>Exploit (Reentrancy & DoS)</strong></td>
+                  <td>Kerentanan pada fungsi transfer kontrak</td>
+                  <td>Manipulasi sistem & pengurasan escrow</td>
+                  <td>Pola Checks-Effects-Interactions, OpenZeppelin ReentrancyGuard, Pull-Payment</td>
+                  <td><span class="badge-status pass">Passed</span></td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td><strong>Kesalahan Input Pengguna</strong></td>
+                  <td>Parameter tidak valid / nilai bid di bawah syarat</td>
+                  <td>Transaksi salah atau ditolak (revert)</td>
+                  <td>Validasi ganda di antarmuka web3 dApp dan require() di dalam smart contract</td>
+                  <td><span class="badge-status pass">Passed</span></td>
+                </tr>
+                <tr>
+                  <td>4</td>
+                  <td><strong>Penyalahgunaan Hak Akses</strong></td>
+                  <td>Pembatasan kewenangan tidak memadai</td>
+                  <td>Perubahan sistem tanpa izin</td>
+                  <td>Role-Based Access Control (RBAC), admin tidak bisa intervensi bid lelang</td>
+                  <td><span class="badge-status pass">Passed</span></td>
+                </tr>
+                <tr>
+                  <td>5</td>
+                  <td><strong>Shill Bidding & Kolusi</strong></td>
+                  <td>Penjual menawar barang sendiri untuk mendongkrak harga</td>
+                  <td>Kerugian penawar asli</td>
+                  <td>Aturan deterministik <code>msg.sender != seller</code>, verifikasi identitas
+                    <code>UserRegistry</code></td>
+                  <td><span class="badge-status pass">Passed</span></td>
+                </tr>
+                <tr>
+                  <td>6</td>
+                  <td><strong>Insiden Keamanan / Anomali</strong></td>
+                  <td>Serangan mendadak atau kondisi darurat jaringan</td>
+                  <td>Gangguan layanan lelang</td>
+                  <td>Emergency Pause Circuit Breaker (<code>Pausable</code>) oleh Admin untuk penyelidikan</td>
+                  <td><span class="badge-status pass">Passed</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB 5: VERISCAN EXPLORER (Audit & Transparency) -->
+    <!-- ============================================== -->
+    <section class="tab-pane" id="paneExplorer">
+      <div class="explorer-container">
+        <!-- Explorer Header -->
+        <div class="explorer-hero glass-panel">
+          <div class="explorer-hero-left">
+            <span class="badge-explorer">VeriScan Block Explorer</span>
+            <h2>Buku Besar Terdistribusi Sepolia Testnet</h2>
+            <p>Auditor, regulator, dan masyarakat umum dapat mengawasi setiap transaksi lelang secara transparan dan
+              tanpa sensor.</p>
+          </div>
+          <div class="explorer-hero-right">
+            <div class="search-tx-box">
+              <input type="text" id="explorerSearchInput" placeholder="Cari Tx Hash / Alamat Kontrak / Block #"
+                class="form-input">
+              <button class="btn btn-secondary" onclick="app.searchExplorer()">Cari</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ledger Live Feeds -->
+        <div class="explorer-grid">
+          <!-- Recent Blocks -->
+          <div class="glass-panel feed-card">
+            <div class="feed-header">
+              <div class="feed-title">
+                <span class="pulse-dot"></span> Blok Terkonfirmasi Terakhir
+              </div>
+              <span class="network-speed">PoS Consensus ~ 12s block time</span>
+            </div>
+            <div class="feed-list" id="blocksFeedList">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Recent Blockchain Transactions & Event Logs -->
+          <div class="glass-panel feed-card">
+            <div class="feed-header">
+              <div class="feed-title">
+                <span class="pulse-dot green"></span> Log Event Smart Contract (VeriBid)
+              </div>
+              <span class="network-speed">Events: BidPlaced, AuctionCreated, Withdrawn</span>
+            </div>
+            <div class="feed-list" id="eventsFeedList">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Smart Contract State Inspector -->
+        <div class="glass-panel state-inspector-card">
+          <div class="inspector-header">
+            <h3>State Kontrak On-Chain (Storage Variables)</h3>
+            <span class="badge-tech">Read-Only Query (Auditor Role)</span>
+          </div>
+          <div class="state-variables-grid">
+            <div class="state-var-item">
+              <span class="var-name">UserRegistry.address:</span>
+              <code class="var-val">0x3912FaB490eB99E9eC25dB19D8273719028A1c99</code>
+            </div>
+            <div class="state-var-item">
+              <span class="var-name">AuctionFactory.address:</span>
+              <code class="var-val">0x892a09Cc27e0624077e70D7661001c4800844739</code>
+            </div>
+            <div class="state-var-item">
+              <span class="var-name">Total VeriBid Deployed Auctions:</span>
+              <code class="var-val" id="inspectorTotalAuctions">3</code>
+            </div>
+            <div class="state-var-item">
+              <span class="var-name">Contract Circuit Breaker (isPaused):</span>
+              <code class="var-val text-success" id="inspectorPauseStatus">false (Normal Operation)</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================== -->
+  <!-- MODAL: PLACE BID (placeBid payable) -->
+  <!-- ============================================== -->
+  <div class="modal-overlay" id="bidModalOverlay">
+    <div class="modal-card glass-panel" id="bidModalCard">
+      <div class="modal-header">
+        <div class="modal-badge-row">
+          <span class="badge-modal">Auction.sol: placeBid()</span>
+          <span class="badge-security small">Payable Transaction</span>
+        </div>
+        <button class="modal-close-btn" onclick="app.closeBidModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="bid-item-preview">
+          <img id="modalItemImage" src="" alt="Item Preview" class="modal-thumb">
+          <div class="modal-item-info">
+            <h3 id="modalItemTitle">Judul Barang</h3>
+            <p id="modalItemContract" class="text-mono text-muted">0x000...0000</p>
+            <div class="current-highest-row">
+              <span>Tawaran Tertinggi Saat Ini:</span>
+              <strong class="text-cyan" id="modalCurrentBid">0.00 ETH</strong>
+            </div>
+            <div class="min-next-bid-row">
+              <span>Batas Minimal Penawaran Berikutnya:</span>
+              <strong class="text-amber" id="modalMinBidRequirement">0.00 ETH</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="bid-input-section">
+          <label for="bidAmountInput">Jumlah Penawaran Anda (ETH) <span class="required">*</span></label>
+          <div class="input-with-symbol bid-input-wrap">
+            <input type="number" step="0.01" id="bidAmountInput" class="form-input bid-big-input" placeholder="0.00">
+            <span class="symbol-badge">ETH</span>
+          </div>
+          <div class="quick-bid-chips" id="quickBidChips">
+            <!-- Chips generated dynamically -->
+          </div>
+        </div>
+
+        <div class="bid-execution-rules">
+          <h4>Aturan Smart Contract (Bab 3.3.B):</h4>
+          <ul>
+            <li>✅ Pengirim wajib terverifikasi di <code>UserRegistry</code>.</li>
+            <li>✅ Pengirim bukan penjual lelang (mencegah shill bidding).</li>
+            <li>✅ Dana otomatis dikunci pada Escrow Smart Contract.</li>
+            <li>✅ Jika ada penawar lama, dananya dicatat ke <code>saldoTarik</code> penawar tersebut.</li>
+          </ul>
+        </div>
+
+        <!-- Simulated Gas & Total -->
+        <div class="tx-summary-box">
+          <div class="tx-row">
+            <span>Nilai Bid Dikirim:</span>
+            <span id="txValueDisplay">0.00 ETH</span>
+          </div>
+          <div class="tx-row">
+            <span>Estimasi Gas EVM:</span>
+            <span class="text-muted">~ 0.00185 ETH (21,000 gas)</span>
+          </div>
+          <div class="tx-divider"></div>
+          <div class="tx-row total">
+            <span>Total Pengeluaran:</span>
+            <strong class="text-cyan" id="txTotalDisplay">0.00185 ETH</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="app.closeBidModal()">Batal</button>
+        <button class="btn btn-primary" id="btnConfirmPlaceBid" onclick="app.executePlaceBid()">
+          <span class="btn-spinner" id="bidSpinner" style="display:none;"></span>
+          Konfirmasi Transaksi (MetaMask)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: PULL PAYMENT / REFUND (withdraw()) -->
+  <!-- ============================================== -->
+  <div class="modal-overlay" id="refundModalOverlay">
+    <div class="modal-card glass-panel" id="refundModalCard">
+      <div class="modal-header">
+        <div class="modal-badge-row">
+          <span class="badge-modal">Auction.sol: withdraw()</span>
+          <span class="badge-security small">Pull-Payment Escrow</span>
+        </div>
+        <button class="modal-close-btn" onclick="app.closeRefundModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="refund-illustration">
+          <div class="refund-vault-icon">🏦</div>
+          <h3>Penarikan Dana Pengembalian (Pull Payment)</h3>
+          <p>Sesuai Bab 3.4 poin 4: VeriBid menggunakan pola <strong>Pull Payment</strong>. Saat tawaran Anda
+            terlampaui, dana lelang sebelumnya tidak ditransfer paksa (push) untuk mencegah serangan DoS, melainkan siap
+            ditarik kapan saja oleh penawar secara mandiri.</p>
+        </div>
+
+        <div class="refund-balance-card">
+          <span class="label">Saldo Anda yang Tersimpan di Smart Contract Escrow:</span>
+          <div class="big-balance-display">
+            <span id="modalRefundAmount">0.000</span> <span class="unit">ETH</span>
+          </div>
+          <span class="fiat-eq" id="modalRefundFiat">≈ Rp 0</span>
+        </div>
+
+        <div class="security-check-card">
+          <div class="check-header">
+            <span class="icon">🛡️</span>
+            <strong>Verifikasi Checks-Effects-Interactions:</strong>
+          </div>
+          <p>1. Cek: <code>saldo = saldoTarik[msg.sender] > 0</code><br>
+            2. Efek: <code>saldoTarik[msg.sender] = 0</code> (Saldo dinolkan sebelum transfer)<br>
+            3. Interaksi: <code>payable(msg.sender).transfer(saldo)</code> (Aman dari Reentrancy)</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="app.closeRefundModal()">Tutup</button>
+        <button class="btn btn-primary" id="btnExecuteWithdraw" onclick="app.executeWithdraw()">
+          Tarik Dana ke Dompet Sekarang
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: ADMIN / KYC MANAGER (Bab 2 & 3) -->
+  <!-- ============================================== -->
+  <div class="modal-overlay" id="adminModalOverlay">
+    <div class="modal-card glass-panel" style="max-width: 680px;">
+      <div class="modal-header">
+        <div class="modal-badge-row">
+          <span class="badge-modal">Admin Dashboard</span>
+          <span class="badge-security small">UserRegistry & Emergency Pause</span>
+        </div>
+        <button class="modal-close-btn" onclick="app.closeAdminModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="admin-action-row">
+          <div class="circuit-breaker-card">
+            <div class="breaker-info">
+              <h4>Circuit Breaker (Pausable)</h4>
+              <p>Hentikan sementara seluruh aktivitas penawaran jika terdeteksi anomali keamanan.</p>
+            </div>
+            <button class="btn btn-warning" id="btnTogglePause" onclick="app.toggleEmergencyPause()">
+              Jeda Darurat (Pause)
+            </button>
+          </div>
+        </div>
+
+        <div class="kyc-management-section">
+          <h4>Daftar Wallet Terverifikasi (UserRegistry.sol)</h4>
+          <div class="kyc-add-row">
+            <input type="text" id="newWhitelistInput" placeholder="Masukkan Alamat Wallet Baru (0x...)"
+              class="form-input">
+            <button class="btn btn-secondary" onclick="app.addAddressToWhitelist()">+ Verifikasi Alamat</button>
+          </div>
+
+          <div class="kyc-table-wrapper">
+            <table class="kyc-table">
+              <thead>
+                <tr>
+                  <th>Alamat Wallet</th>
+                  <th>Nama/Label</th>
+                  <th>Status KYC</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="kycTableBody">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="app.closeAdminModal()">Selesai</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: LOGIN & AUTHENTICATION -->
+  <!-- ============================================== -->
+  <div class="modal-overlay" id="loginModalOverlay">
+    <div class="modal-card glass-panel modal-login-card">
+      <div class="modal-header">
+        <div class="modal-badge-row">
+          <span class="badge-modal">VeriBid Authentication</span>
+          <span class="badge-security small">Web3 & Role Access</span>
+        </div>
+        <button class="modal-close-btn" onclick="app.closeLoginModal()">&times;</button>
+      </div>
+
+      <div class="modal-body modal-login-body">
+        <div class="login-intro-header">
+          <div class="login-brand-icon">🔑</div>
+          <div>
+            <h3 class="login-main-title">Masuk ke Portal Pelelangan</h3>
+            <p class="login-main-sub">Pilih metode login akun: Simulasi Peran Aktor, Hubungkan Web3 Wallet, atau Login
+              Email/Kata Sandi.</p>
+          </div>
+        </div>
+
+        <!-- Auth Tabs -->
+        <div class="login-nav-tabs">
+          <button class="login-tab-btn active" id="tabLoginRole" onclick="app.switchLoginTab('role')">
+            👤 Pilih Peran Aktor
+          </button>
+          <button class="login-tab-btn" id="tabLoginWeb3" onclick="app.switchLoginTab('web3')">
+            🦊 Web3 Wallet
+          </button>
+          <button class="login-tab-btn" id="tabLoginEmail" onclick="app.switchLoginTab('email')">
+            ✉️ Email / Password
+          </button>
+        </div>
+
+        <!-- TAB CONTENT 1: Role-Based Actor Fast Login -->
+        <div class="login-pane active" id="loginPaneRole">
+          <p class="login-pane-hint">Pilih salah satu profil aktor terverifikasi untuk langsung masuk dan menyimulasikan
+            hak akses smart contract:</p>
+          <div class="actor-login-list">
+            <div class="actor-login-card" onclick="app.selectLoginActor('bidder')">
+              <div class="actor-card-avatar">👤</div>
+              <div class="actor-card-info">
+                <div class="actor-card-name-row">
+                  <strong>Haikal Raditya</strong>
+                  <span class="actor-pill bidder">Peserta Lelang</span>
+                </div>
+                <div class="actor-card-meta">
+                  <span>0x71C8...39B2</span> • <span class="actor-balance">14.85 ETH</span> • <span
+                    class="text-success">✓ KYC Verified</span>
+                </div>
+              </div>
+              <button class="btn btn-secondary btn-sm">Masuk &rarr;</button>
+            </div>
+
+            <div class="actor-login-card" onclick="app.selectLoginActor('seller')">
+              <div class="actor-card-avatar">🏷️</div>
+              <div class="actor-card-info">
+                <div class="actor-card-name-row">
+                  <strong>Fredrik Papilaya</strong>
+                  <span class="actor-pill seller">Penjual (Seller)</span>
+                </div>
+                <div class="actor-card-meta">
+                  <span>0x9D28...8841</span> • <span class="actor-balance">22.40 ETH</span> • <span
+                    class="text-success">✓ KYC Verified</span>
+                </div>
+              </div>
+              <button class="btn btn-secondary btn-sm">Masuk &rarr;</button>
+            </div>
+
+            <div class="actor-login-card" onclick="app.selectLoginActor('admin')">
+              <div class="actor-card-avatar">🛡️</div>
+              <div class="actor-card-info">
+                <div class="actor-card-name-row">
+                  <strong>Dhani Ariatmanto</strong>
+                  <span class="actor-pill admin">Admin / Auctioneer</span>
+                </div>
+                <div class="actor-card-meta">
+                  <span>0x00A1...Admin</span> • <span class="actor-balance">50.00 ETH</span> • <span
+                    class="text-amber">Circuit Breaker Access</span>
+                </div>
+              </div>
+              <button class="btn btn-secondary btn-sm">Masuk &rarr;</button>
+            </div>
+
+            <div class="actor-login-card" onclick="app.selectLoginActor('auditor')">
+              <div class="actor-card-avatar">🔍</div>
+              <div class="actor-card-info">
+                <div class="actor-card-name-row">
+                  <strong>Jesen & Liska</strong>
+                  <span class="actor-pill auditor">Auditor / Regulator</span>
+                </div>
+                <div class="actor-card-meta">
+                  <span>0xAud1...Auditor</span> • <span class="actor-balance">5.00 ETH</span> • <span
+                    class="text-cyan">Read-Only Logs</span>
+                </div>
+              </div>
+              <button class="btn btn-secondary btn-sm">Masuk &rarr;</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB CONTENT 2: Web3 Wallet Connect -->
+        <div class="login-pane" id="loginPaneWeb3">
+          <p class="login-pane-hint">Hubungkan dompet Web3 terdesentralisasi Anda ke jaringan Ethereum Sepolia Testnet:
+          </p>
+          <div class="web3-wallets-grid">
+            <button class="web3-connect-btn" onclick="app.connectWeb3Wallet('MetaMask')">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask">
+              <span class="w-name">MetaMask</span>
+              <span class="w-status">Tersedia di Browser</span>
+            </button>
+            <button class="web3-connect-btn" onclick="app.connectWeb3Wallet('Coinbase Wallet')">
+              <div class="coinbase-logo-circle">C</div>
+              <span class="w-name">Coinbase Wallet</span>
+              <span class="w-status">Extension / Mobile</span>
+            </button>
+            <button class="web3-connect-btn" onclick="app.connectWeb3Wallet('WalletConnect')">
+              <div class="wc-logo-circle">⚡</div>
+              <span class="w-name">WalletConnect</span>
+              <span class="w-status">Scan QR Code</span>
+            </button>
+            <button class="web3-connect-btn" onclick="app.connectWeb3Wallet('Brave Wallet')">
+              <div class="brave-logo-circle">🦁</div>
+              <span class="w-name">Brave Wallet</span>
+              <span class="w-status">Brave Browser</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB CONTENT 3: Email / Password -->
+        <div class="login-pane" id="loginPaneEmail">
+          <form id="emailLoginForm" onsubmit="app.handleEmailLogin(event)">
+            <div class="form-group">
+              <label for="loginEmailInput">Alamat Email / ID Pengguna</label>
+              <input type="email" id="loginEmailInput" class="form-input" placeholder="nama@domain.com atau ID Akun"
+                required value="haikal.raditya@veribid.network">
+            </div>
+            <div class="form-group">
+              <label for="loginPasswordInput">Kata Sandi (Password)</label>
+              <input type="password" id="loginPasswordInput" class="form-input" placeholder="Masukkan kata sandi..."
+                required value="••••••••••••">
+            </div>
+            <div class="login-options-row">
+              <label class="remember-label">
+                <input type="checkbox" checked> Ingat sesi masuk saya
+              </label>
+              <a href="#"
+                onclick="alert('Fitur pemulihan kata sandi smart contract terkirim ke email terdaftar.'); return false;"
+                class="forgot-link">Lupa kata sandi?</a>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" style="margin-top:14px; padding:12px;">
+              🚀 Masuk Sekarang
+            </button>
+          </form>
+        </div>
+
+        <!-- Active Session Box -->
+        <div class="active-session-summary">
+          <div class="session-left">
+            <span class="session-label">Sesi Aktif Saat Ini:</span>
+            <strong id="sessionUserName">Haikal Raditya (Peserta Lelang)</strong>
+            <span class="session-addr" id="sessionUserAddr">0x71C84920...39B2</span>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="app.handleLogout()">
+            🚪 Keluar (Logout)
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="app.closeLoginModal()">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: PANCAKESWAP STYLE CONNECT WALLET -->
+  <!-- ============================================== -->
+  <div class="modal-overlay" id="connectWalletModalOverlay" onclick="if(event.target===this) app.closeConnectWalletModal()">
+    <div class="modal-card modal-connect-card">
+      <!-- Close Button -->
+      <button class="modal-close-icon-btn" onclick="app.closeConnectWalletModal()" aria-label="Close modal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <div class="connect-modal-grid">
+        <!-- LEFT COLUMN: Wallet List & Social Login -->
+        <div class="connect-modal-left">
+          <div class="connect-modal-header">
+            <h2 class="connect-modal-title">Connect Wallet</h2>
+          </div>
+
+          <!-- Social Login Bar -->
+          <div class="social-login-bar" onclick="app.handleSocialLoginClick()">
+            <div class="social-icons-group">
+              <!-- Google -->
+              <span class="social-circle-icon" title="Google Login">
+                <svg width="15" height="15" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+                  <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.17 0 9.96 0 12s.45 3.83 1.25 5.42l4.03-3.15z"/>
+                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                </svg>
+              </span>
+              <!-- X / Twitter -->
+              <span class="social-circle-icon" title="X Login">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="#111827">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+              </span>
+              <!-- Discord -->
+              <span class="social-circle-icon" title="Discord Login">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#5865F2">
+                  <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                </svg>
+              </span>
+              <!-- Telegram -->
+              <span class="social-circle-icon" title="Telegram Login">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#229ED9">
+                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.121l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.458c.535-.194 1.006.128.832.94z"/>
+                </svg>
+              </span>
+            </div>
+            <div class="social-login-text">
+              Social Login <span class="chevron-arrow">&rsaquo;</span>
+            </div>
+          </div>
+
+          <!-- TOP WALLETS Label -->
+          <div class="wallets-category-label">TOP WALLETS</div>
+
+          <!-- Grid of Top Wallets (3 columns x 2 rows) -->
+          <div class="top-wallets-grid">
+            <!-- 1. MetaMask -->
+            <div class="wallet-select-card" onclick="app.selectWalletAndConnect('MetaMask')">
+              <div class="wallet-icon-wrapper">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask" class="wallet-svg-icon" onerror="this.src='https://assets.coingecko.com/coins/images/279/small/ethereum.png'">
+              </div>
+              <div class="wallet-select-name">MetaMask</div>
+            </div>
+
+            <!-- 2. Trust Wallet -->
+            <div class="wallet-select-card" onclick="app.selectWalletAndConnect('Trust Wallet')">
+              <div class="wallet-icon-wrapper">
+                <svg class="wallet-svg-icon" viewBox="0 0 40 40" fill="none">
+                  <rect width="40" height="40" rx="12" fill="#0500FF"/>
+                  <path d="M20 7L10 11.5V19.5C10 26.5 14.3 32.5 20 34C25.7 32.5 30 26.5 30 19.5V11.5L20 7Z" fill="white"/>
+                  <path d="M20 9.2L12 12.8V19.5C12 25.3 15.5 30.5 20 31.8C24.5 30.5 28 25.3 28 19.5V12.8L20 9.2Z" fill="#0500FF"/>
+                  <path d="M20 11V30C23.5 28.8 26 24.5 26 19.5V13.8L20 11Z" fill="#00D395"/>
+                </svg>
+              </div>
+              <div class="wallet-select-name">Trust Wallet</div>
+            </div>
+
+            <!-- 3. Binance Web3 Wallet -->
+            <div class="wallet-select-card" onclick="app.selectWalletAndConnect('Binance Wallet')">
+              <div class="wallet-icon-wrapper">
+                <svg class="wallet-svg-icon" viewBox="0 0 40 40">
+                  <rect width="40" height="40" rx="12" fill="#F0B90B"/>
+                  <path d="M20 10.5L24.3 14.8L20 19.1L15.7 14.8L20 10.5ZM14.3 16.2L18.6 20.5L14.3 24.8L10 20.5L14.3 16.2ZM25.7 16.2L30 20.5L25.7 24.8L21.4 20.5L25.7 16.2ZM20 21.9L24.3 26.2L20 30.5L15.7 26.2L20 21.9ZM20 16.2L24.3 20.5L20 24.8L15.7 20.5L20 16.2Z" fill="#181A20"/>
+                </svg>
+              </div>
+              <div class="wallet-select-name">Binance Web3</div>
+            </div>
+
+            <!-- 4. OKX Wallet -->
+            <div class="wallet-select-card" onclick="app.selectWalletAndConnect('OKX Wallet')">
+              <div class="wallet-icon-wrapper">
+                <svg class="wallet-svg-icon" viewBox="0 0 40 40">
+                  <rect width="40" height="40" rx="12" fill="#000000"/>
+                  <rect x="11" y="11" width="7" height="7" fill="white" rx="1.5"/>
+                  <rect x="22" y="11" width="7" height="7" fill="white" rx="1.5"/>
+                  <rect x="16.5" y="16.5" width="7" height="7" fill="white" rx="1.5"/>
+                  <rect x="11" y="22" width="7" height="7" fill="white" rx="1.5"/>
+                  <rect x="22" y="22" width="7" height="7" fill="white" rx="1.5"/>
+                </svg>
+              </div>
+              <div class="wallet-select-name">OKX Wallet</div>
+            </div>
+
+            <!-- 5. Coinbase Wallet -->
+            <div class="wallet-select-card" onclick="app.selectWalletAndConnect('Coinbase Wallet')">
+              <div class="wallet-icon-wrapper">
+                <svg class="wallet-svg-icon" viewBox="0 0 40 40">
+                  <rect width="40" height="40" rx="12" fill="#0052FF"/>
+                  <circle cx="20" cy="20" r="10.5" fill="white"/>
+                  <rect x="16.5" y="16.5" width="7" height="7" rx="1" fill="#0052FF"/>
+                </svg>
+              </div>
+              <div class="wallet-select-name">Coinbase Wallet</div>
+            </div>
+
+            <!-- 6. WalletConnect -->
+            <div class="wallet-select-card" onclick="app.selectWalletAndConnect('WalletConnect')">
+              <div class="wallet-icon-wrapper">
+                <svg class="wallet-svg-icon" viewBox="0 0 40 40">
+                  <rect width="40" height="40" rx="12" fill="#3B99FC"/>
+                  <path d="M12.5 17.5C16.6 13.4 23.4 13.4 27.5 17.5L28 18C28.2 18.2 28.2 18.6 28 18.8L26 20.8C25.9 20.9 25.7 20.9 25.6 20.8L24.8 20C22.2 17.4 17.8 17.4 15.2 20L14.3 20.9C14.2 21 14 21 13.9 20.9L11.9 18.9C11.7 18.7 11.7 18.3 11.9 18.1L12.5 17.5ZM30.4 21.2L32.2 23C32.4 23.2 32.4 23.6 32.2 23.8L24.3 31.7C24.1 31.9 23.7 31.9 23.5 31.7L18.4 26.6C18.3 26.5 18.2 26.5 18.1 26.6L13.1 31.7C12.9 31.9 12.5 31.9 12.3 31.7L7.8 27.2C7.6 27 7.6 26.6 7.8 26.4L9.6 24.6C9.8 24.4 10.2 24.4 10.4 24.6L15.5 29.7C15.6 29.8 15.7 29.8 15.8 29.7L20.9 24.6C21.1 24.4 21.5 24.4 21.7 24.6L26.8 29.7C26.9 29.8 27 29.8 27.1 29.7L29.6 27.2C29.7 27.1 29.7 27 29.6 26.9L24.5 21.8C24.3 21.6 24.3 21.2 24.5 21L26.3 19.2C26.5 19 26.9 19 27.1 19.2L30.4 21.2Z" fill="white"/>
+                </svg>
+              </div>
+              <div class="wallet-select-name">WalletConnect</div>
+            </div>
+          </div>
+
+          <!-- More Wallets Row -->
+          <div class="more-wallets-bar" onclick="app.toggleMoreWallets()">
+            <div class="more-wallets-icons">
+              <span class="mini-wallet-circle brave">🦁</span>
+              <span class="mini-wallet-circle rabby">🐰</span>
+              <span class="mini-wallet-circle opera">⭕</span>
+              <span class="mini-wallet-circle safepal">🛡️</span>
+            </div>
+            <div class="more-wallets-label">
+              More Wallets <span class="chevron-arrow" id="moreWalletsChevron">&rsaquo;</span>
+            </div>
+          </div>
+
+          <!-- Collapsible Extra Wallets -->
+          <div class="extra-wallets-list" id="extraWalletsList" style="display:none;">
+            <div class="extra-wallet-item" onclick="app.selectWalletAndConnect('Brave Wallet')">
+              <span class="ew-icon">🦁</span>
+              <span class="ew-name">Brave Wallet</span>
+              <span class="ew-badge">Browser</span>
+            </div>
+            <div class="extra-wallet-item" onclick="app.selectWalletAndConnect('Rabby Wallet')">
+              <span class="ew-icon">🐰</span>
+              <span class="ew-name">Rabby Wallet</span>
+              <span class="ew-badge">DeFi</span>
+            </div>
+            <div class="extra-wallet-item" onclick="app.selectWalletAndConnect('Opera Crypto')">
+              <span class="ew-icon">⭕</span>
+              <span class="ew-name">Opera Crypto Wallet</span>
+              <span class="ew-badge">Web3</span>
+            </div>
+            <div class="extra-wallet-item" onclick="app.selectWalletAndConnect('SafePal')">
+              <span class="ew-icon">🛡️</span>
+              <span class="ew-name">SafePal Wallet</span>
+              <span class="ew-badge">Hardware</span>
+            </div>
+            <div class="extra-wallet-item demo-highlight" onclick="app.selectWalletAndConnect('Simulated Demo')">
+              <span class="ew-icon">⚡</span>
+              <span class="ew-name">Sepolia Demo Wallet (Instant 14.85 ETH)</span>
+              <span class="ew-badge demo">1-Click Testnet</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Mascot Bunny & Security Education -->
+        <div class="connect-modal-right">
+          <div class="mascot-img-wrap">
+            <img src="assets/wallet_bunny_mascot.png" alt="VeriBid Security Mascot" class="wallet-mascot-img">
+          </div>
+          <h3 class="mascot-subtext">Manage and store your private keys and assets securely.</h3>
+          
+          <div class="mascot-help-actions">
+            <a href="#" onclick="app.showWalletGuide(); return false;" class="mascot-link-highlight">
+              Haven't got a crypto wallet yet? <br><strong>Learn How to Connect</strong>
+            </a>
+            <a href="#" onclick="app.showDisclaimer(); return false;" class="mascot-link-muted">
+              Disclaimer
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: WALLET DETAILS & SEPOLIA ACCOUNT -->
+  <!-- ============================================== -->
+  <div class="modal-overlay" id="walletModalOverlay">
+    <div class="modal-card glass-panel" style="max-width: 500px;">
+      <div class="modal-header">
+        <div class="modal-badge-row">
+          <span class="badge-modal">Ethereum Sepolia</span>
+          <span class="badge-security small green">
+            <span class="badge-dot green"></span> Connected
+          </span>
+        </div>
+        <button class="modal-close-btn" onclick="app.closeWalletModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Connected Account Card -->
+        <div class="wallet-modal-account-card">
+          <div class="wallet-avatar-circle">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <div class="wallet-account-details">
+            <div class="wallet-account-label">Alamat Dompet Terhubung:</div>
+            <div class="wallet-address-copy-row">
+              <span class="wallet-full-address text-mono" id="modalWalletAddressFull">0x0000...0000</span>
+              <button class="btn-copy-addr" onclick="app.copyWalletAddress()" title="Salin Alamat Dompet">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Balance Highlights -->
+        <div class="wallet-balances-grid">
+          <div class="wallet-balance-box">
+            <span class="balance-sub-label">Saldo Sepolia ETH</span>
+            <span class="balance-main-num" id="modalWalletEthBalance">0.0000 ETH</span>
+            <span class="balance-fiat-eq" id="modalWalletEthFiat">≈ Rp 0</span>
+            <button class="btn-faucet-inline" onclick="app.claimSepoliaEthFaucet()">+ Faucet 5.0 ETH</button>
+          </div>
+          <div class="wallet-balance-box vbid-box">
+            <span class="balance-sub-label">Saldo Token $VBID</span>
+            <span class="balance-main-num text-cyan" id="modalWalletVbidBalance">500 VBID</span>
+            <button class="btn-faucet-inline" onclick="app.claimVbidFaucet()">+ Faucet 500 $VBID</button>
+          </div>
+        </div>
+
+        <!-- Network Info Pill Strip -->
+        <div class="wallet-network-info-strip">
+          <div class="info-row-item">
+            <span class="info-key">Jaringan:</span>
+            <span class="info-val">Ethereum Sepolia Testnet</span>
+          </div>
+          <div class="info-row-item">
+            <span class="info-key">Chain ID:</span>
+            <span class="info-val text-mono">11155111 (0xaa36a7)</span>
+          </div>
+          <div class="info-row-item">
+            <span class="info-key">Status KYC:</span>
+            <span class="info-val text-success">✓ Terverifikasi di UserRegistry</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="justify-content: space-between;">
+        <a href="https://sepolia.etherscan.io" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" id="modalEtherscanLink">
+          <span>Lihat di Etherscan</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </a>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-secondary" onclick="app.switchWalletAccount()" title="Ganti ke Akun MetaMask Lain">
+            <span>🔄 Ganti Akun</span>
+          </button>
+          <button class="btn btn-ghost" onclick="app.disconnectWallet()">Putuskan Dompet</button>
+          <button class="btn btn-primary" onclick="app.closeWalletModal()">Tutup</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: METAMASK / WEB3 NOT DETECTED -->
+  <!-- ============================================== -->
+  <div class="modal-overlay" id="noWeb3ModalOverlay">
+    <div class="modal-card glass-panel" style="max-width: 520px;">
+      <div class="modal-header">
+        <div class="modal-badge-row">
+          <span class="badge-modal">Ethereum Sepolia</span>
+        </div>
+        <button class="modal-close-btn" onclick="app.closeNoWeb3Modal()">&times;</button>
+      </div>
+
+      <div class="modal-body" style="text-align: center; padding: 28px 24px;">
+        <div class="no-web3-icon">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask" style="width: 56px; height: 56px; margin-bottom: 14px;">
+        </div>
+        <h3 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 8px;">MetaMask / Web3 Belum Terdeteksi</h3>
+        <p style="font-size: 0.9rem; color: #64748b; line-height: 1.6; margin-bottom: 24px;">
+          Untuk menghubungkan dompet kripto asli Anda secara langsung ke Ethereum Sepolia Testnet, silakan pasang ekstensi browser <strong>MetaMask</strong>. Anda juga dapat menggunakan <strong>Mode Simulasi Sepolia</strong> untuk langsung mencoba seluruh fitur lelang tanpa menginstal ekstensi.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <a href="https://metamask.io/download/" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-full" style="padding: 12px;">
+            <span>Unduh MetaMask (Ekstensi Resmi)</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          </a>
+          <button class="btn btn-secondary btn-full" onclick="app.connectSimulatedSepoliaWallet()">
+            <span>⚡ Gunakan Mode Simulasi Sepolia (Instan)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Simulated Blockchain Transaction Toast Notification -->
+  <div class="tx-toast" id="txToast">
+    <div class="tx-toast-icon" id="txToastIcon">⚡</div>
+    <div class="tx-toast-content">
+      <h4 id="txToastTitle">Transaksi Terkirim</h4>
+      <p id="txToastMsg">Sedang diproses oleh validator Ethereum...</p>
+      <a href="#" id="txToastLink" class="tx-toast-hash" onclick="app.openTxInExplorer(event)">Lihat di VeriScan:
+        0x892a...e901</a>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
+</body>
+
+</html>
